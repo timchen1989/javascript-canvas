@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Canvas Filter Document</title>
+</head>
+<body>
+
+    <h3>Canvas Filter</h3>
+    <!-- 加上一個灰階的濾鏡 -->
+    <button onclick="grayscale();">Grayscale</button>
+    <canvas id="cvs" style="border:1px solid black;" width="800px" height="600px"></canvas>
+</body>
+</html>
+<script>
+function grayscale(){
+    let pixels = ctx.getImageData(0, 0, cvs.width, cvs.height);
+    //圖片是由n個寬度的像素(點)*m個高度的像素(點)所組合而成，而圖片中的每個點是由4個數字所組成這四個代表意思是r, g, b, a(透明度)
+    console.log(pixels);
+    let data=pixels.data;
+    let avg;
+    for(let i=0; i<data.length; i+=4){
+        //灰階是將三個數字加總後做平均給RGB代表r=g=b這三個數字都相同會有灰階的效果
+        avg=(data[i]+data[i+1]+data[i+2])/3;
+        // console.log(avg);
+        data[i]=avg;
+        data[i+1]=avg;
+        data[i+2]=avg;
+    }
+    //把資料再放回去
+    ctx.putImageData(pixels, 0, 0);
+}
+//取得canvas標籤
+let cvs = document.querySelector("#cvs");
+//取得canvas對應的context物件，這個物件用來畫圖，一個canvas畫布對應一個context
+let ctx=cvs.getContext("2d");
+//畫方形, x軸位置, y軸位置, width(寬度), height(高度)
+// ctx.fillRect(50, 50, 10, 100);
+//畫出圖(圖片物件, x位置, y位置, 寬, 高)
+let img = new Image();
+img.src="20160912-051030_U6077_M196351_75a0.jpg";
+//因為讀取圖片需要時間所以等圖片載入完成就才呼叫這個方法
+img.addEventListener("load", function(){
+    console.log("photo onload");
+    //確認圖片載入完成, 才畫上去
+    
+    //填滿整個畫布
+    cvs.width=img.width;
+    cvs.height=img.height;
+    ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+});
+
+
+</script>
